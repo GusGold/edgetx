@@ -286,6 +286,19 @@ const struct YamlIdStr enum_TelemetrySensorType[] = {
   {  TELEM_TYPE_CALCULATED, "TYPE_CALCULATED"  },
   {  0, NULL  }
 };
+const struct YamlIdStr enum_USBJoystickIfMode[] = {
+  {  USBJOYS_JOYSTICK, "JOYSTICK"  },
+  {  USBJOYS_GAMEPAD, "GAMEPAD"  },
+  {  USBJOYS_MULTIAXIS, "MULTIAXIS"  },
+  {  0, NULL  }
+};
+const struct YamlIdStr enum_USBJoystickCh[] = {
+  {  USBJOYS_CH_NONE, "CH_NONE"  },
+  {  USBJOYS_CH_BUTTON, "CH_BUTTON"  },
+  {  USBJOYS_CH_AXIS, "CH_AXIS"  },
+  {  USBJOYS_CH_SIM, "CH_SIM"  },
+  {  0, NULL  }
+};
 
 //
 // Structs last
@@ -460,6 +473,7 @@ static const struct YamlNode struct_RadioData[] = {
   YAML_SIGNED( "uartSampleMode", 2 ),
   YAML_UNSIGNED( "stickDeadZone", 3 ),
   YAML_PADDING( 1 ),
+  YAML_STRING("selectedTheme", 26),
   YAML_END
 };
 static const struct YamlNode struct_unsigned_8[] = {
@@ -485,7 +499,8 @@ static const struct YamlNode struct_TimerData[] = {
   YAML_UNSIGNED( "persistent", 2 ),
   YAML_SIGNED( "countdownStart", 2 ),
   YAML_UNSIGNED( "showElapsed", 1 ),
-  YAML_PADDING( 7 ),
+  YAML_UNSIGNED( "extraHaptic", 1 ),
+  YAML_PADDING( 6 ),
   YAML_STRING("name", 8),
   YAML_END
 };
@@ -847,13 +862,22 @@ static const struct YamlNode struct_LayoutPersistentData[] = {
 };
 static const struct YamlNode struct_CustomScreenData[] = {
   YAML_IDX,
-  YAML_STRING("LayoutId", 10),
+  YAML_STRING("LayoutId", 12),
   YAML_STRUCT("layoutData", 6720, struct_LayoutPersistentData, NULL),
   YAML_END
 };
 static const struct YamlNode struct_TopBarPersistentData[] = {
-  YAML_ARRAY("zones", 576, 4, struct_ZonePersistentData, NULL),
+  YAML_ARRAY("zones", 576, 2, struct_ZonePersistentData, NULL),
   YAML_ARRAY("options", 96, 1, struct_ZoneOptionValueTyped, NULL),
+  YAML_END
+};
+static const struct YamlNode struct_USBJoystickChData[] = {
+  YAML_IDX,
+  YAML_ENUM("mode", 3, enum_USBJoystickCh),
+  YAML_UNSIGNED( "inversion", 1 ),
+  YAML_UNSIGNED( "param", 4 ),
+  YAML_UNSIGNED( "btn_num", 5 ),
+  YAML_UNSIGNED( "switch_npos", 3 ),
   YAML_END
 };
 static const struct YamlNode struct_ModelData[] = {
@@ -873,7 +897,8 @@ static const struct YamlNode struct_ModelData[] = {
   YAML_UNSIGNED( "throttleReversed", 1 ),
   YAML_UNSIGNED( "enableCustomThrottleWarning", 1 ),
   YAML_UNSIGNED( "disableTelemetryWarning", 1 ),
-  YAML_PADDING( 6 ),
+  YAML_UNSIGNED( "showInstanceIds", 1 ),
+  YAML_PADDING( 5 ),
   YAML_SIGNED( "customThrottleWarningPosition", 8 ),
   YAML_UNSIGNED( "beepANACenter", 16 ),
   YAML_ARRAY("mixData", 160, 64, struct_MixData, NULL),
@@ -884,7 +909,7 @@ static const struct YamlNode struct_ModelData[] = {
   YAML_ARRAY("logicalSw", 72, 64, struct_LogicalSwitchData, NULL),
   YAML_ARRAY("customFn", 72, 64, struct_CustomFunctionData, cfn_is_active),
   YAML_STRUCT("swashR", 64, struct_SwashRingData, swash_is_active),
-  YAML_ARRAY("flightModeData", 384, 9, struct_FlightModeData, fmd_is_active),
+  YAML_ARRAY("flightModeData", 320, 9, struct_FlightModeData, fmd_is_active),
   YAML_UNSIGNED_CUST( "thrTraceSrc", 8, r_thrSrc, w_thrSrc ),
   YAML_CUSTOM("switchWarningState",r_swtchWarn,w_swtchWarn),
   YAML_PADDING( 32 ),
@@ -909,6 +934,10 @@ static const struct YamlNode struct_ModelData[] = {
   YAML_STRUCT("topbarData", 2400, struct_TopBarPersistentData, NULL),
   YAML_UNSIGNED( "view", 8 ),
   YAML_STRING("modelRegistrationID", 8),
+  YAML_UNSIGNED( "usbJoystickExtMode", 1 ),
+  YAML_ENUM("usbJoystickIfMode", 3, enum_USBJoystickIfMode),
+  YAML_UNSIGNED( "usbJoystickCircularCut", 4 ),
+  YAML_ARRAY("usbJoystickCh", 16, 26, struct_USBJoystickChData, NULL),
   YAML_END
 };
 static const struct YamlNode struct_PartialModel[] = {
